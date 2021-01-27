@@ -6,19 +6,13 @@ pub struct Parser {
 }
 
 impl Parser {
-    pub fn new(input: String) -> Self {
-        Parser {
-            input: input,
-            pos: 0,
-        }
-    }
-
     pub fn parse(source: String) -> dom::Node {
-        let mut nodes = Parser {
+        let mut parser = Parser {
             pos: 0,
             input: source,
-        }
-        .parse_nodes();
+        };
+
+        let mut nodes = parser.parse_nodes();
 
         if nodes.len() == 1 {
             nodes.swap_remove(0)
@@ -97,17 +91,19 @@ impl Parser {
     }
 
     pub fn parse_comment(&mut self) -> dom::Node {
-        assert_eq!(self.consume_char(), '!');
-        assert_eq!(self.consume_char(), '-');
-        assert_eq!(self.consume_char(), '-');
+        self.consume_sequence("!--");
 
         let to_return = dom::Node::Comment(self.consume_while(|c| c != '-'));
 
-        assert_eq!(self.consume_char(), '-');
-        assert_eq!(self.consume_char(), '-');
-        assert_eq!(self.consume_char(), '>');
+        self.consume_sequence("-->");
 
         to_return
+    }
+
+    pub fn consume_sequence(&mut self, seq: &str) {
+        for ch in seq.chars() {
+            assert_eq!(self.consume_char(), ch);
+        }
     }
 
     pub fn parse_element(&mut self) -> dom::Node {
@@ -127,8 +123,7 @@ impl Parser {
             '>' => {
                 children = self.parse_nodes();
 
-                assert_eq!(self.consume_char(), '<');
-                assert_eq!(self.consume_char(), '/');
+                self.consume_sequence("</");
                 assert_eq!(self.parse_tag_name(), tag_name);
                 assert_eq!(self.consume_char(), '>');
             },
@@ -225,16 +220,7 @@ mod test {
     }
 
     #[test]
-    fn parse_tag_name() {
-        let mut pars = Parser::new(String::from("tag>"));
-
-        assert_eq!(pars.parse_tag_name(), "tag");
-    }
-
-    #[test]
-    fn parse_node() {
-        let mut pars = Parser::new(String::from("<tag attrib=\"value\">bla</tag>"));
-
-        pars.parse_node();
+    fn parse() {
+        let mut pars = Parser::parse(String::from("<tag attrib=\"value\">bla</tag>"));
     }
 }
