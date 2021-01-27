@@ -21,18 +21,29 @@ fn _node_format(node: &Node, string: &mut String, _space: usize) {
                 attrs.push_str(&format!(" {}=\"{}\"", k, v));
             }
 
-            string.push_str(&format!(
-                "{}<{}{}>\n",
-                "    ".repeat(_space),
-                root.tag_name,
-                attrs
-            ));
+            if ed.is_paired {
+                string.push_str(&format!(
+                    "{}<{}{}>\n",
+                    "    ".repeat(_space),
+                    root.tag_name,
+                    attrs
+                ));
+            } else {
+                string.push_str(&format!(
+                    "{}<{}{}/>\n",
+                    "    ".repeat(_space),
+                    root.tag_name,
+                    attrs
+                ));
+            }
 
             for element in &root.children {
                 _node_format(element, string, _space + 1);
             }
 
-            string.push_str(&format!("{}</{}>\n", "    ".repeat(_space), root.tag_name));
+            if ed.is_paired {
+                string.push_str(&format!("{}</{}>\n", "    ".repeat(_space), root.tag_name));
+            }
         }
         Node::Text(text) => {
             string.push_str(&format!("{}{}\n", "    ".repeat(_space), text));

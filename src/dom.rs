@@ -11,6 +11,7 @@ pub enum Node {
 #[derive(Debug)]
 pub struct ElementData {
     pub tag_name: String,
+    pub is_paired: bool,
     pub attributes: AttrMap,
     pub children: Vec<Node>,
 }

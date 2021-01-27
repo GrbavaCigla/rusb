@@ -25,6 +25,7 @@ impl Parser {
         } else {
             dom::Node::Element(dom::ElementData {
                 children: nodes,
+                is_paired: true,
                 attributes: dom::AttrMap::new(),
                 tag_name: String::from("html"),
             })
@@ -86,7 +87,7 @@ impl Parser {
         let mut attributes = dom::AttrMap::new();
         loop {
             self.consume_whitespace();
-            if self.next_char() == '>' {
+            if self.next_char() == '>' || self.next_char() == '/' {
                 break;
             }
             let (name, value) = self.parse_attr();
@@ -118,17 +119,30 @@ impl Parser {
 
         let tag_name = self.parse_tag_name();
         let attrs = self.parse_attributes();
-        assert_eq!(self.consume_char(), '>');
 
-        let children = self.parse_nodes();
+        let mut children = vec![];
+        let mut is_paired = true;
 
-        assert_eq!(self.consume_char(), '<');
-        assert_eq!(self.consume_char(), '/');
-        assert_eq!(self.parse_tag_name(), tag_name);
-        assert_eq!(self.consume_char(), '>');
+        match self.consume_char() {
+            '>' => {
+                children = self.parse_nodes();
+
+                assert_eq!(self.consume_char(), '<');
+                assert_eq!(self.consume_char(), '/');
+                assert_eq!(self.parse_tag_name(), tag_name);
+                assert_eq!(self.consume_char(), '>');
+            },
+            '/' => {
+                assert_eq!(self.consume_char(), '>');
+
+                is_paired = false;
+            },
+            _ => assert!(false)
+        }
 
         let elem_data = dom::ElementData {
             attributes: attrs,
+            is_paired: is_paired,
             children: children,
             tag_name: tag_name,
         };
