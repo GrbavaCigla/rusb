@@ -55,7 +55,7 @@ impl Parser {
 
     pub fn parse_tag_name(&mut self) -> String {
         self.consume_while(|c| match c {
-            'a'..='z' | '0' ..= '9' => true,
+            'a'..='z' | '0'..='9' => true,
             _ => false,
         })
     }
@@ -181,14 +181,17 @@ mod test {
 
     #[test]
     fn next_char() {
-        let pars = Parser::new(String::from("Hello, World"), 3);
+        let pars = Parser {
+            input: String::from("Hello, World"),
+            pos: 3,
+        };
 
         assert_eq!(pars.next_char(), 'l');
     }
 
     #[test]
     fn consume_while() {
-        let mut pars = Parser::new(String::from("Hello, World"), 7);
+        let mut pars = Parser{input: String::from("Hello, World"), pos: 7};
 
         pars.consume_while(|c| match c {
             'A'..='Z' | 'a'..='z' | ',' | ' ' => true,
@@ -201,7 +204,7 @@ mod test {
 
     #[test]
     fn consume_char() {
-        let mut pars = Parser::new(String::from("Hello, World"), 7);
+        let mut pars = Parser{input: String::from("Hello, World"), pos: 7};
 
         assert_eq!(pars.consume_char(), 'W');
         assert_eq!(pars.consume_char(), 'o');
@@ -209,14 +212,14 @@ mod test {
 
     #[test]
     fn parse_tag_name() {
-        let mut pars = Parser::new(String::from("<tag>"), 1);
+        let mut pars = Parser::new(String::from("tag>"));
 
         assert_eq!(pars.parse_tag_name(), "tag");
     }
 
     #[test]
     fn parse_node() {
-        let mut pars = Parser::new(String::from("<tag attrib=\"value\">bla</tag>"), 0);
+        let mut pars = Parser::new(String::from("<tag attrib=\"value\">bla</tag>"));
 
         pars.parse_node();
     }
