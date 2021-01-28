@@ -142,6 +142,6 @@ mod test {
 
     #[test]
     fn parse() {
-        let mut pars = Parser::parse(String::from("<tag attrib=\"value\">bla</tag>"));
+        Parser::parse(String::from("<tag attrib=\"value\">bla</tag>"));
     }
 }

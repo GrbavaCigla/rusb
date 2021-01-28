@@ -2,8 +2,8 @@ mod html;
 mod dom;
 mod stylesheet;
 mod parser;
+mod css;
 
-#[allow(dead_code)]
 const HTML_TO_PARSE: &str = "
 <html>
 <head>

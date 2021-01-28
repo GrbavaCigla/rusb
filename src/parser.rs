@@ -1,5 +1,3 @@
-use crate::dom;
-
 pub struct Parser {
     pub pos: usize,
     pub input: String,
