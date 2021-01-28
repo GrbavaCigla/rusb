@@ -25,15 +25,6 @@ p2.class{propery: value;another-property: 10px;}
 </style>
 </html>";
 
-#[allow(dead_code)]
-const CSS_TO_PARSE: &str = "
-p.class {
-    propery: value;
-    another-property: 10px;
-}
-
-p2.class{propery: value;another-property: 10px;}";
-
 fn main() {
     let node = html::Parser::parse(String::from(HTML_TO_PARSE));
 
