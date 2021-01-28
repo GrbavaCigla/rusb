@@ -18,9 +18,24 @@ const HTML_TO_PARSE: &str = "
 <script>I am the script</script>
 </html>";
 
-fn main() {
-    let node = html::Parser::parse(String::from(HTML_TO_PARSE));
+const CSS_TO_PARSE: &str = "p.class {propery: value;another-property: 10px;}p2.class{propery: value;another-property: 10px;}";
 
-    println!("{}", dom::tree::node_tree(&node));
-    println!("{}", dom::format::node_format(&node));
+fn main() {
+    let _node = html::Parser::parse(String::from(HTML_TO_PARSE));
+
+    // println!("{}", dom::tree::node_tree(&node));
+    // println!("{}", dom::format::node_format(&node));
+
+    let mut node2 = css::Parser {
+        parser: parser::Parser {
+            // input: String::from("property: #00bfff; property2: red"),
+            input: String::from(CSS_TO_PARSE),
+            pos: 0
+        }
+    };
+
+    println!("{:?}", node2.parse_selectors());
+    println!("{:?}", node2.parse_declarations());
+    println!("{:?}", node2.parse_selectors());
+    println!("{:?}", node2.parse_declarations());
 }
