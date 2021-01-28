@@ -1,5 +1,7 @@
 mod html;
 mod dom;
+mod stylesheet;
+mod parser;
 
 #[allow(dead_code)]
 const HTML_TO_PARSE: &str = "
