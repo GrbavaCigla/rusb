@@ -2,13 +2,13 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Stylesheet {
-    rules: Vec<Rule>,
+    pub rules: Vec<Rule>,
 }
 
 #[derive(Debug)]
 pub struct Rule {
-    selectors: Vec<Selector>,
-    declarations: Declarations,
+    pub selectors: Vec<Selector>,
+    pub declarations: Declarations,
 }
 
 #[derive(Debug)]

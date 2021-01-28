@@ -123,7 +123,7 @@ impl Parser {
         }
     }
 
-    fn parse_nodes(&mut self) -> Vec<dom::Node> {
+    pub fn parse_nodes(&mut self) -> Vec<dom::Node> {
         let mut nodes = Vec::new();
         loop {
             self.parser.consume_whitespace();

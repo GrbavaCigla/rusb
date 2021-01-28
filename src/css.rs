@@ -8,6 +8,39 @@ pub struct Parser {
 }
 
 impl Parser {
+    pub fn parse(source: String) -> stylesheet::Stylesheet {
+        Self {
+            parser: parser::Parser{
+                pos: 0,
+                input: source
+            }
+        }.parse_stylesheet()
+    }
+
+    pub fn parse_stylesheet(&mut self) -> stylesheet::Stylesheet {
+        let mut rules = Vec::<stylesheet::Rule>::new();
+
+        while !self.parser.eof() {
+            rules.push(self.parse_rule());
+
+            self.parser.consume_whitespace();
+        }
+
+        stylesheet::Stylesheet{
+            rules: rules
+        }
+    }
+
+    pub fn parse_rule(&mut self) -> stylesheet::Rule {
+        let selectors = self.parse_selectors();
+        let declarations = self.parse_declarations();
+
+        stylesheet::Rule{
+            selectors: selectors,
+            declarations: declarations
+        }
+    }
+
     pub fn parse_identifier(&mut self) -> String {
         self.parser.consume_while(|c| match c {
             'a'..='z' | '-' | '_' | 'A'..='Z' | '0' ..= '9' => true,
@@ -27,6 +60,8 @@ impl Parser {
         let mut selectors = Vec::new();
 
         loop {
+            self.parser.consume_whitespace();
+
             selectors.push(self.parse_selector());
 
             self.parser.consume_whitespace();

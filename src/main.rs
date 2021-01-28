@@ -16,26 +16,44 @@ const HTML_TO_PARSE: &str = "
 <br/>
 </body>
 <script>I am the script</script>
+<style>p.class {
+    propery: value;
+    another-property: 10px;
+}
+
+p2.class{propery: value;another-property: 10px;}
+</style>
 </html>";
 
-const CSS_TO_PARSE: &str = "p.class {propery: value;another-property: 10px;}p2.class{propery: value;another-property: 10px;}";
+#[allow(dead_code)]
+const CSS_TO_PARSE: &str = "
+p.class {
+    propery: value;
+    another-property: 10px;
+}
+
+p2.class{propery: value;another-property: 10px;}";
 
 fn main() {
-    let _node = html::Parser::parse(String::from(HTML_TO_PARSE));
+    let node = html::Parser::parse(String::from(HTML_TO_PARSE));
 
-    // println!("{}", dom::tree::node_tree(&node));
-    // println!("{}", dom::format::node_format(&node));
+    match node {
+        dom::Node::Element(ed) => {
+            let css =  ed.get_elements_by_tag_name("style");
 
-    let mut node2 = css::Parser {
-        parser: parser::Parser {
-            // input: String::from("property: #00bfff; property2: red"),
-            input: String::from(CSS_TO_PARSE),
-            pos: 0
-        }
+            if !css.is_empty() {
+                if !css[0].children.is_empty() {
+                    match &css[0].children[0] {
+                        dom::Node::Text(text) => {
+                            let css = css::Parser::parse(String::from(text));
+
+                            println!("{:#?}", css);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        },
+        _ => {}
     };
-
-    println!("{:?}", node2.parse_selectors());
-    println!("{:?}", node2.parse_declarations());
-    println!("{:?}", node2.parse_selectors());
-    println!("{:?}", node2.parse_declarations());
 }
